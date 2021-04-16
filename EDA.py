@@ -4,16 +4,28 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import statsmodels.formula.api as smf
+from patsy.builtins import Q
 sns.set_style('whitegrid')
 
 # Setup --------------------------------------------------------------------------------
-# Load Data
-url = 'https://raw.githubusercontent.com/aadusumilli87/Data-Mining-Final-Project/main/data.csv?token=AMPV3CRBFHXPGK2AI6M5E7DAPDCXG'
+# Load Data (Note: Raw Link keeps changing. Unsure how to get around this besides updating the link each session)
+url = 'https://raw.githubusercontent.com/aadusumilli87/Data-Mining-Final-Project/main/data.csv?token=AMPV3CSECR2SZOXCAMBTG43APHLLQ'
 bankrupt = pd.read_csv(url, index_col=None)
 
+# Basic Cleaning:
+# Established that there are no missing values
+# Some columns have leading white space and almost all have white space in them - remove
+# TODO: Note - Statsmodels doesn't like columns with spaces, but this makes everything look worse on plots
+bankrupt.columns = bankrupt.columns.str.replace(' ', '')
+# Remove
+# Rename the Dependent Variable - the Question Mark may cause problems
+bankrupt.rename(columns={'Bankrupt?': 'Bankrupt'}, inplace=True)
 
 # EDA ---------------------------------------------------------------------------------
-
+# TODO: Clear that there are many redundant variables. 3 Net value per Share variables, 3 ROA variables, 3 Net Profit Growth Rate, etc
+# TODO: EDA Gameplan - hone in on variables with v similar names and eliminate those less correlated with the dependent (keep original to test against)
+# TODO: Variables to Remove: Net Income Flag (no variation); Interest-bearingdebtinterestrate; 
 # Summary Overview - Get a Sense of What the Columns are.
 bankrupt.info()  # No missing values at all, all data is numeric (no need for dummy encoding)
 # Dimensions: 6819 * 96
@@ -25,16 +37,16 @@ describe_output = bankrupt.describe()
 bankrupt.duplicated().sum()  # No identical rows
 
 # Correlation Matrix:
-corr_mat = bankrupt.corr()
+corr_mat = bankrupt.corr('spearman')
 
 # EDA Plots:
 # Class Imbalance:
-sns.countplot(bankrupt['Bankrupt?'])
+sns.countplot(bankrupt['Bankrupt'])
 plt.title('Bankruptcy Counts \n 0 = Not Bankrupt || 1 = Bankrupt')
 plt.show()
 
 # General Distributions
-bankrupt.hist(figsize=(40, 45))
+bankrupt.hist(figsize=(40, 45), bins = 40)
 plt.show()
 
 # Boxpolots
@@ -42,26 +54,37 @@ plt.figure(figsize=(25, 25))
 sns.boxplot(data=bankrupt, orient='h')
 plt.show()
 
-# Basic Cleaning:
-# Established that there are no missing values
-# Some columns have leading white space - will remove:
-bankrupt.columns = bankrupt.columns.map(lambda x: x.strip())
-
-
-
-
-# This is a bit too convoluted to make any sense of (too many variables). Let's hone in on the dependent variable:
+# Correlation Heatmap - All Variables
+f, ax = plt.subplots(figsize=(31, 27))
+color_scheme = sns.diverging_palette(240, 10, as_cmap=True)
+mask = np.triu(np.ones_like(corr_mat, dtype=bool))
+sns.heatmap(corr_mat, mask=mask, cmap=color_scheme, vmax=1, center=0, square=True, linewidths=0.5)
+plt.title('Bankruptcy Data: Correlation Heatmap', fontsize=40)
+plt.show()
+# Most variables are only weakly correlated with Bankruptcy - debt measures are positively correlated, and profit measures are negatively correlated
+# Will hone in on the most correlated variables:
 # Positive Correlations
-corr_mat.iloc[:, 0].sort_values(ascending=False).iloc[0:10]
+corr_mat.iloc[:, 0].sort_values(ascending=False).iloc[0:26]
+# Isolate Positively Correlated Variables - 26 with positve (spearman) correlation over 1%
 # Debt Ratio is the most positively correlated
 # All positive correlations appear to be reflective of expenses and debt, which is as expected
+# Isolate a new data frame with these variables
+bankrupt_corrPos = bankrupt[corr_mat.iloc[:, 0].sort_values(ascending=False).iloc[0:26].index]
+# Groupby - What differences are evident?
+corrPos_grouped = bankrupt_corrPos.groupby('Bankrupt').mean()
+# Some quality problems:
+# TODO: Totaldebt/Totalnetworth has 8 values that are > 1, all are in the millions (probably data entry error) - should remove
+# TODO: Interest-bearingdebtinterestrate has 221 values way too high - can't trust these. Should remove this column
+# Allocationrateperperson: 12 values > 1, all in the millions (none coincide with high values of Totaldebt/totalnetworth). Variable should be removed
 
 # Negative Correlations:
 corr_mat.iloc[:, 0].sort_values(ascending=True).iloc[0:10]
 # All negative correlations appear to be profitability metrics
 
-# TODO: Clear that there are many redundant variables. 3 Net value per Share variables, 3 ROA variables, 3 Net Profit Growth Rate, etc
-# TODO: Variables to Remove: Net Income Flag (no variation)
+
+
+
+
 
 
 # Groupby: What differences do we see for the dependent variable:
@@ -70,3 +93,4 @@ grouped_mean = bankrupt.groupby('Bankrupt?').mean()
 # Summary of Grouped Means - We can use this to look for data quality issues:
 
 
+3.470000e+09
