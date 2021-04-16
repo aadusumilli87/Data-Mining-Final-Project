@@ -4,10 +4,11 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+sns.set_style('whitegrid')
 
 # Setup --------------------------------------------------------------------------------
 # Load Data
-url = 'https://raw.githubusercontent.com/aadusumilli87/Data-Mining-Final-Project/main/data.csv?token=AMPV3CVJDA3ANQ7UU37XP5DAO5XGG'
+url = 'https://raw.githubusercontent.com/aadusumilli87/Data-Mining-Final-Project/main/data.csv?token=AMPV3CRBFHXPGK2AI6M5E7DAPDCXG'
 bankrupt = pd.read_csv(url, index_col=None)
 
 
@@ -20,19 +21,34 @@ bankrupt.info()  # No missing values at all, all data is numeric (no need for du
 # Summary Stats
 describe_output = bankrupt.describe()
 
-# Basic Cleaning:
-# Established that there are no missing values
-# Some columns have leading white space - will remove:
-bankrupt.columns = bankrupt.columns.map(lambda x: x.strip())
-
 # Any Duplicate Values:
 bankrupt.duplicated().sum()  # No identical rows
 
 # Correlation Matrix:
 corr_mat = bankrupt.corr()
-# Plot
-sns.heatmap(corr_mat)
+
+# EDA Plots:
+# Class Imbalance:
+sns.countplot(bankrupt['Bankrupt?'])
+plt.title('Bankruptcy Counts \n 0 = Not Bankrupt || 1 = Bankrupt')
 plt.show()
+
+# General Distributions
+bankrupt.hist(figsize=(40, 45))
+plt.show()
+
+# Boxpolots
+plt.figure(figsize=(25, 25))
+sns.boxplot(data=bankrupt, orient='h')
+plt.show()
+
+# Basic Cleaning:
+# Established that there are no missing values
+# Some columns have leading white space - will remove:
+bankrupt.columns = bankrupt.columns.map(lambda x: x.strip())
+
+
+
 
 # This is a bit too convoluted to make any sense of (too many variables). Let's hone in on the dependent variable:
 # Positive Correlations
@@ -51,4 +67,6 @@ corr_mat.iloc[:, 0].sort_values(ascending=True).iloc[0:10]
 # Groupby: What differences do we see for the dependent variable:
 grouped_mean = bankrupt.groupby('Bankrupt?').mean()
 # Some data quality problems are evident from this: 9 observations with Quick Ratio values that are clearly incorrect (in the thousands)
-# Lower Return on Assets,
+# Summary of Grouped Means - We can use this to look for data quality issues:
+
+
