@@ -10,7 +10,7 @@ sns.set_style('whitegrid')
 
 # Setup --------------------------------------------------------------------------------
 # Load Data (Note: Raw Link keeps changing. Unsure how to get around this besides updating the link each session)
-url = 'https://raw.githubusercontent.com/aadusumilli87/Data-Mining-Final-Project/main/data.csv?token=AMPV3CSECR2SZOXCAMBTG43APHLLQ'
+url = 'https://raw.githubusercontent.com/aadusumilli87/Data-Mining-Final-Project/main/data.csv?token=AMPV3CVXYF4RD2GKSZNK3RDAPXQQC'
 bankrupt = pd.read_csv(url, index_col=None)
 
 # Basic Cleaning:
@@ -22,22 +22,56 @@ bankrupt.columns = bankrupt.columns.str.replace(' ', '')
 # Rename the Dependent Variable - the Question Mark may cause problems
 bankrupt.rename(columns={'Bankrupt?': 'Bankrupt'}, inplace=True)
 
+
 # EDA ---------------------------------------------------------------------------------
 # TODO: Clear that there are many redundant variables. 3 Net value per Share variables, 3 ROA variables, 3 Net Profit Growth Rate, etc
 # TODO: EDA Gameplan - hone in on variables with v similar names and eliminate those less correlated with the dependent (keep original to test against)
-# TODO: Variables to Remove: Net Income Flag (no variation); Interest-bearingdebtinterestrate; 
+# TODO: Variables to Remove: Net Income Flag (no variation); Interest-bearingdebtinterestrate; (all variables in the outliers_le_95 object)
+# TODO: Other Outliers should be imputed (for predictive model datasets). For inferential models, those outliers should probably be removed
 # Summary Overview - Get a Sense of What the Columns are.
 bankrupt.info()  # No missing values at all, all data is numeric (no need for dummy encoding)
 # Dimensions: 6819 * 96
 
-# Summary Stats
-describe_output = bankrupt.describe()
+# Correlation Matrix:
+corr_mat = bankrupt.corr('spearman')
 
 # Any Duplicate Values:
 bankrupt.duplicated().sum()  # No identical rows
 
-# Correlation Matrix:
-corr_mat = bankrupt.corr('spearman')
+# Summary Stats
+describe_output = bankrupt.describe()
+# TODO: Note - Clear that some columns have very large outliers that appear to be data quality problems - where 99% of observations are <= 1, and a few are
+# TODO: (cont.) very very large. Will write a function to help identify these
+
+
+def outlier_detection(dataset):
+    outliers = dataset.quantile(1) - (dataset.quantile(0.75) * 1.5)  # This rule can be modified to be proper IQR, or whatever decision rule we want
+    outliers = outliers[outliers > 1]
+    return outliers.index
+
+
+# Collect Outlier Columns
+bankrupt_outliers = bankrupt.loc[:, outlier_detection(bankrupt)]
+# Distribution
+bankrupt_outliers.hist(figsize=(40, 45))
+plt.show()
+# Most of these seem to follow the same pattern - vast majority of observations are < 1, with a few that are extremely large
+# Can either remove the variables or imputes
+# How many values are below 1?
+outliers_prop = bankrupt_outliers[bankrupt_outliers <= 1].count() / bankrupt_outliers.shape[0]
+# Many columns have > 99%, these can probably be imputed. For those under:
+outliers_le_99 = bankrupt_outliers.loc[:, outliers_prop[outliers_prop < .95].index]
+# Are these variables strongly correlated (IE, should we try and find a way to preserve them?)
+corr_mat.loc[:, outliers_le_99.columns].iloc[0]
+# None are strongly correlated, highest at about 5%. These should be removed
+
+# How might we impute the outliers in the others?
+outliers_99 = bankrupt_outliers.loc[:, outliers_prop > 0.95]
+# Do the large values coincide with bankrupt companies disproportionately?
+outliers_99 = pd.merge(outliers_99, bankrupt[['Bankrupt']], left_index=True, right_index=True, how='inner')
+# We need to see how different these are for bankrupt vs non-bankrupt
+outliers_99_grouped = outliers_99.groupby('Bankrupt').mean()
+# Doesn't appear to be too much systemic, besides Revenue per Share, which may be ok
 
 # EDA Plots:
 # Class Imbalance:
@@ -93,4 +127,3 @@ grouped_mean = bankrupt.groupby('Bankrupt?').mean()
 # Summary of Grouped Means - We can use this to look for data quality issues:
 
 
-3.470000e+09
