@@ -8,6 +8,7 @@ import statsmodels.formula.api as smf
 from patsy.builtins import Q
 sns.set_style('whitegrid')
 
+
 # Setup --------------------------------------------------------------------------------
 # Load Data (Note: Raw Link keeps changing. Unsure how to get around this besides updating the link each session)
 url = 'https://raw.githubusercontent.com/aadusumilli87/Data-Mining-Final-Project/main/data.csv?token=AMPV3CVXYF4RD2GKSZNK3RDAPXQQC'
@@ -72,6 +73,34 @@ outliers_99 = pd.merge(outliers_99, bankrupt[['Bankrupt']], left_index=True, rig
 # We need to see how different these are for bankrupt vs non-bankrupt
 outliers_99_grouped = outliers_99.groupby('Bankrupt').mean()
 # Doesn't appear to be too much systemic, besides Revenue per Share, which may be ok
+# We need to identify which of these are in close to bankruptcy cases
+# 96th percentile observation shows all decimal numbers, above that we get very large numbers for many of the columns - using that as cutoff point:
+
+
+def outlier_value_detection(dataset):
+    column_list = []
+    for col in dataset:
+        current_series = dataset[str(col)]
+        current_series = current_series[current_series > 1]
+        current_series = pd.merge(current_series, bankrupt['Bankrupt'], left_index=True, right_index=True, how='inner')
+        column_list.append(current_series)
+    return column_list
+
+outlier_values = outlier_value_detection(outliers_99)
+
+# Counts of Bankruptcy cases in these variables:
+count_list = []
+for i in range(len(outlier_values) - 1):
+    current_counts = outlier_values[i].groupby('Bankrupt').count()
+    count_list.append(current_counts)
+
+# Looking through the list, counts don't seem systemically biased.
+# Looking at means:
+mean_list = []
+for i in range(len(outlier_values) - 1):
+    current_counts = outlier_values[i].groupby('Bankrupt').mean()
+    mean_list.append(current_counts)
+
 
 # EDA Plots:
 # Class Imbalance:
@@ -122,7 +151,7 @@ corr_mat.iloc[:, 0].sort_values(ascending=True).iloc[0:10]
 
 
 # Groupby: What differences do we see for the dependent variable:
-grouped_mean = bankrupt.groupby('Bankrupt?').mean()
+grouped_mean = bankrupt.groupby('Bankrupt').mean()
 # Some data quality problems are evident from this: 9 observations with Quick Ratio values that are clearly incorrect (in the thousands)
 # Summary of Grouped Means - We can use this to look for data quality issues:
 
