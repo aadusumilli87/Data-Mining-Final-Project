@@ -11,7 +11,7 @@ sns.set_style('whitegrid')
 
 # Setup --------------------------------------------------------------------------------
 # Load Data (Note: Raw Link keeps changing. Unsure how to get around this besides updating the link each session)
-url = 'https://raw.githubusercontent.com/aadusumilli87/Data-Mining-Final-Project/main/data.csv?token=AMPV3CVXYF4RD2GKSZNK3RDAPXQQC'
+url = 'https://raw.githubusercontent.com/aadusumilli87/Data-Mining-Final-Project/main/data.csv?token=AMPV3CQPFPTOTKCSHR4D5HTAQBHU6'
 bankrupt = pd.read_csv(url, index_col=None)
 
 # Basic Cleaning:
@@ -29,6 +29,8 @@ bankrupt.rename(columns={'Bankrupt?': 'Bankrupt'}, inplace=True)
 # TODO: EDA Gameplan - hone in on variables with v similar names and eliminate those less correlated with the dependent (keep original to test against)
 # TODO: Variables to Remove: Net Income Flag (no variation); Interest-bearingdebtinterestrate; (all variables in the outliers_le_95 object)
 # TODO: Other Outliers should be imputed (for predictive model datasets). For inferential models, those outliers should probably be removed
+# TODO: For predictive models - most variables are bounded by 1, with outliers above. We can hone in on the outliers, replace them with NaN's,
+# TODO: Then groupby transform to fill with group mean or median.
 # Summary Overview - Get a Sense of What the Columns are.
 bankrupt.info()  # No missing values at all, all data is numeric (no need for dummy encoding)
 # Dimensions: 6819 * 96
@@ -145,14 +147,18 @@ corr_mat.iloc[:, 0].sort_values(ascending=True).iloc[0:10]
 # All negative correlations appear to be profitability metrics
 
 
-
-
-
-
-
 # Groupby: What differences do we see for the dependent variable:
 grouped_mean = bankrupt.groupby('Bankrupt').mean()
 # Some data quality problems are evident from this: 9 observations with Quick Ratio values that are clearly incorrect (in the thousands)
 # Summary of Grouped Means - We can use this to look for data quality issues:
 
+# Redundent Variables - Eliminate variables that are near identical with others
 
+
+
+
+# Demo Run of Predictive Model Data Preparation
+# 1: Remove Variables with large proportions of outliers:
+bankrupt_trimmed = bankrupt.drop(outliers_le_99.columns, axis=1)
+
+# 2: Impute Outliers with Conditional Means
