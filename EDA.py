@@ -11,6 +11,8 @@ from sklearn.model_selection import train_test_split
 import plotly.express as px
 import plotly.graph_objects as go
 from imblearn.over_sampling import SMOTE
+from sklearn import preprocessing
+from sklearn import utils
 from sklearn.preprocessing import StandardScaler
 from sklearn.manifold import TSNE
 import os
@@ -416,17 +418,36 @@ plot_scatter_tsne(X_smote_train,
 X_train = ss.fit_transform(X_train)
 y_train = ss.fit_transform(y_train.reshape(-1, 1)).reshape(-1)
 # Standardize the validation data
-X_val = ss.transform(X_val.reshape(-1, 1)).reshape(-1)
-y_val = ss.transform(y_val.reshape(-1, 1)).reshape(-1)
+X_val = ss.fit_transform(X_val)
+y_val = ss.fit_transform(y_val.reshape(-1, 1)).reshape(-1)
 # Standardize the test data
-X_test = ss.transform(X_test)
-y_test = ss.transform(y_test.reshape(-1, 1)).reshape(-1)
+X_test = ss.fit_transform(X_test)
+y_test = ss.fit_transform(y_test.reshape(-1, 1)).reshape(-1)
+
+# Encoding Training data for PCA
+X_t = X_train.reshape(-1)
+l_e = preprocessing.LabelEncoder()
+enc = l_e.fit_transform(X_t)
 
 # Applying PCA on training
 pca = PCA(n_components=2)
 X_train = pca.fit_transform(X_train)
 X_test = pca.transform(X_test)
 explained_variance = pca.explained_variance_ratio_
-# LogisiticReg on Training
-classifier = LogisticRegression(random_state = seed)
-classifier.fit(X_train, y_train)
+print("Explained variation per Principal Component: {}".format(pca.explained_variance_ratio_))
+# PC1 holds 13.92% of info; PC2 holds 7.6% of info
+
+#PCA Plot
+#PC Values
+bank = pd.DataFrame(data=X_train,columns=['PC-1','PC-2'])
+plt.figure()
+plt.xlabel("PC-1")
+plt.ylabel("PC-2")
+plt.title("PCA")
+targets = [0,1,2]
+colors = ['r','b','g']
+for target, color in zip(targets, colors):
+    ind = bankrupt['Bankrupt']==target
+    plt.scatter(bank.loc[ind,'PC-1'],bank.loc[ind,'PC-2'],c=color,s=50)
+plt.legend(targets,prop={'size':20})
+plt.show()
