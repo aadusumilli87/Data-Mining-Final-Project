@@ -113,15 +113,30 @@ corr_mat.to_csv("SpearmanCorrMat.csv")
 # * indicates that these variables are also a part of bankrupt_outliers below
 
 # TG - multicollinearity suggestion - remove 17 cols that are >=|95%| collinearly related - NOT SPEARMAN
-corr_mat = bankrupt.corr()
-corr_mat = corr_mat.iloc[1:,1:]
-multicoll = []
+multicoll_mat = []
 for i in range(len(corr_mat.columns)):
     for j in range(i):
         if(corr_mat.iloc[i,j] >= 0.95 or corr_mat.iloc[i,j] <= -0.95):
-            if corr_mat.columns[j] not in multicoll:
-                multicoll.append(corr_mat.columns[j])
-print(len(multicoll))
+            if corr_mat.columns[j] not in multicoll_mat:
+                multicoll_mat.append(corr_mat.columns[j])
+print("Spearman Correlation Matrix Multicollinearity Columns:",len(multicoll_mat))
+print(multicoll_mat)
+
+corr_mtx = bankrupt.corr()
+corr_mtx = corr_mtx.iloc[1:,1:]
+multicoll_mtx = []
+for i in range(len(corr_mtx.columns)):
+    for j in range(i):
+        if (corr_mtx.iloc[i, j] >= 0.95 or corr_mtx.iloc[i, j] <= -0.95):
+            if corr_mtx.columns[j] not in multicoll_mtx:
+                multicoll_mtx.append(corr_mtx.columns[j])
+print("Pearson Correlation Matrix Multicollinearity Columns:",len(multicoll_mtx))
+print(multicoll_mtx)
+mcm_diff = [ele for ele in multicoll_mat if ele not in multicoll_mtx]
+print("Columns identified by Spearman but not Pearson: ",mcm_diff) # Some are useful, removing only
+
+#Removing multicollinearity columns identified by Pearson Corr
+bankrupt = bankrupt.drop(multicoll_mtx,axis=1)
 
 # Any Duplicate Values:
 bankrupt.duplicated().sum()  # No identical rows
@@ -218,7 +233,7 @@ itob = px.histogram(x=bankrupt['TotalAssetGrowthRate'],
                    template='ggplot2',
                   title='Income VS Bankrupcy',
                   width=700)
-#itob.show()
+itob.show()
 
 # Correlation Heatmap - All Variables
 f, ax = plt.subplots(figsize=(31, 27))
