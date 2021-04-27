@@ -211,6 +211,35 @@ for i in range(len(outlier_values) - 1):
     mean_list.append(current_counts)
 
 
+# Winsorize the Data - In the columns that remain, the outlier problem is less significant than initially suspected
+Winsor_set = bankrupt.max()
+Winsor_set = Winsor_set[Winsor_set > 1]
+# 17 Variables with outlier max values
+# Set cutoff point - where do the values start to get very large?
+x = bankrupt.loc[:, Winsor_set.index].quantile(0.98)
+# Looking at this, we have 2 variables remaining with values > 1
+def winsorize(data, first_quant, second_quant):
+    first_thresh = data.quantile(first_quant)
+    # Isolate Columns with no outliers in 99th percentile values
+    first_thresh_cols = first_thresh[first_thresh < 1].index
+    for col in first_thresh_cols:
+        data[col] = np.where(data[col] > data[col].quantile(first_quant), data[col].quantile(first_quant), data[col])
+    # Isolate Columns Not Captured in the First Thresh
+    second_thresh = data.loc[:, ~data.columns.isin(first_thresh_cols)].columns
+    for col in second_thresh:
+        data[col] = np.where(data[col] > data[col].quantile(second_quant), data[col].quantile(second_quant), data[col])
+    return data
+
+# We can extend this as needed, however two sweeps covers all but two columns
+# Apply the function
+bankrupt.loc[:, Winsor_set.index] = winsorize(data=bankrupt.loc[:, Winsor_set.index], first_quant=0.99, second_quant=0.98)
+
+# Todo: 2 Columns Not Captured - Interest Bearing Debt Rate, and Total Asset Groth Rate
+# For the former, I will just do manually
+bankrupt['Interest-bearingdebtinterestrate'] = np.where(
+    bankrupt['Interest-bearingdebtinterestrate'] > 1, 1, bankrupt['Interest-bearingdebtinterestrate'])
+
+
 # EDA Plots:
 # Class Imbalance:
 sns.countplot(bankrupt['Bankrupt'])
