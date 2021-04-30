@@ -43,8 +43,9 @@ ss = StandardScaler()
 path = os.path.abspath(os.getcwd())
 # Setup --------------------------------------------------------------------------------
 # Load Data (Note: Raw Link keeps changing. Unsure how to get around this besides updating the link each session)
-# url = 'https://raw.githubusercontent.com/aadusumilli87/Data-Mining-Final-Project/main/data.csv?token=AMPV3CVXYF4RD2GKSZNK3RDAPXQQC'
+# url = 'https://raw.githubusercontent.com/aadusumilli87/Data-Mining-Final-Project/main/data.csv?token=AMPV3CTJRCPPMVIX5GQYKSTARG6AS'
 # bankrupt = pd.read_csv(url, index_col=None)
+
 
 # Hard encoding data.csv
 bankrupt = pd.read_csv("data.csv", sep=',',header=0, index_col=None)
@@ -174,6 +175,7 @@ outliers_le_99 = bankrupt_outliers.loc[:, outliers_prop[outliers_prop < .95].ind
 # Are these variables strongly correlated (IE, should we try and find a way to preserve them?)
 corr_mat.loc[:, outliers_le_99.columns].iloc[0]
 # None are strongly correlated, highest at about 5%. These should be removed - TG: agree to remove
+bankrupt.drop(outliers_le_99.columns, axis=1, inplace=True)
 
 # How might we impute the outliers in the others?
 outliers_99 = bankrupt_outliers.loc[:, outliers_prop > 0.95]
@@ -238,6 +240,9 @@ bankrupt.loc[:, Winsor_set.index] = winsorize(data=bankrupt.loc[:, Winsor_set.in
 # For the former, I will just do manually
 bankrupt['Interest-bearingdebtinterestrate'] = np.where(
     bankrupt['Interest-bearingdebtinterestrate'] > 1, 1, bankrupt['Interest-bearingdebtinterestrate'])
+
+# Export Outliers Cleaned Dataset
+# bankrupt.to_csv('bankrupt_clean.csv')
 
 
 # EDA Plots:
@@ -304,13 +309,6 @@ grouped_mean = bankrupt.groupby('Bankrupt').mean()
 # Redundent Variables - Eliminate variables that are near identical with others
 
 
-
-
-# Demo Run of Predictive Model Data Preparation
-# 1: Remove Variables with large proportions of outliers:
-bankrupt_trimmed = bankrupt.drop(outliers_le_99.columns, axis=1)
-
-# 2: Impute Outliers with Conditional Means
 
 
 
