@@ -19,7 +19,6 @@ bankrupt.rename(columns={'Bankrupt?': 'Bankrupt'}, inplace=True)
 # Drop the dependent variable:
 bankrupt.drop('Bankrupt', axis=1, inplace=True)
 # Outlier Handling
-# NOTE: Greyed out for PCA - data cleaning steps cause PCA to perform worse
 #
 # def outlier_detection(dataset):
 #     outliers = dataset.quantile(1) - (dataset.quantile(0.75) * 1.5)  # This rule can be modified to be proper IQR, or whatever decision rule we want - TG: fine with keeping this definition or IQR
@@ -128,7 +127,7 @@ bankrupt_trimmed.drop(inf_vars, axis=1, inplace=True)
 # Rerun Regression
 LPM_2 = sm.OLS(exog=bankrupt_trimmed, endog=bankrupt_label, hasconst=True).fit(cov_type='HC1')
 print(LPM_2.summary())
-# Export
+# Collect Results
 LPM_results = pd.DataFrame(
     {'Parameters': LPM_2.params.values,
      'Standard Error': LPM_2.HC1_se.values,
@@ -141,6 +140,8 @@ LPM_results = LPM_results[LPM_results['P-values'] <= 0.05]
 
 # Order on magnitude
 LPM_results = LPM_results.sort_values(by='Parameters', ascending=False)
+# Export Results
+# LPM_results.to_csv('LPM_results.csv')
 # Show 5 most important variables
 print(LPM_results.head(5))
 # Note: A one standard deviation increase in the Debt/Net Worth ratio corresponds with a 5.6% increase in P(Bankruptcy)
@@ -151,7 +152,7 @@ print(LPM_results.head(5))
 Probit = sm.Probit(exog=bankrupt_trimmed, endog=bankrupt_label).fit()
 # Model Results
 print(Probit)
-# Export Results
+# Collect Results
 Probit_Results = pd.DataFrame(
     {'Parameters': Probit.params.values,
      'T-Stat': Probit.tvalues.values,
@@ -162,6 +163,8 @@ Probit_Results = pd.DataFrame(
 Probit_Results = Probit_Results[Probit_Results['P-values'] <= 0.05]
 # Sort Values
 Probit_Results = Probit_Results.sort_values('Parameters', ascending=False)
+# Export Results
+# Probit_Results.to_csv('Probit_Results.csv')
 # Show most important determinants of Bankruptcy
 print(Probit_Results.head(5))
 # Note: A one SD increase in Operatingprofit/Paid-In Capital increases Z in Phi(z) by 0.467
@@ -213,6 +216,8 @@ var_weight_df['Component'] = [i + 1 for i in range(8) for j in range(5)]
 var_weight_df = var_weight_df.pivot(index='Variables', columns='Component', values='Weight')
 # Sort Values
 var_weight_df = var_weight_df.sort_values(var_weight_df.columns.to_list(), ascending=False)
+# Export
+# var_weight_df.to_csv('PCA_VariableWeight.csv')
 
 # Plot the Components
 plt.figure(figsize=(12, 12))
