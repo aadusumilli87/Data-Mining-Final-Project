@@ -1,0 +1,622 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>667</width>
+    <height>417</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Predicting Bankruptcy</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>11</y>
+      <width>580</width>
+      <height>222</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0" colspan="4">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>568</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_InferentialResults">
+       <property name="text">
+        <string>Inferential Results</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="4">
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>532</width>
+         <height>13</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="3" column="0">
+      <widget class="QPushButton" name="pb_PCA">
+       <property name="text">
+        <string>PCA Results</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QPushButton" name="pB_LPM">
+       <property name="text">
+        <string>LPM Results</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2">
+      <widget class="QPushButton" name="pB_Probit">
+       <property name="text">
+        <string>Probit Results</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="3">
+      <widget class="QPushButton" name="pB_CHMap">
+       <property name="text">
+        <string>Correlation Heatmap</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" colspan="4">
+      <spacer name="verticalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>532</width>
+         <height>13</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="5" column="0" colspan="4">
+      <spacer name="verticalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>532</width>
+         <height>13</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_PredResults">
+       <property name="text">
+        <string>Predictive Results </string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0" colspan="2">
+      <widget class="QPushButton" name="pb_PredModelResults">
+       <property name="text">
+        <string>View Model Results</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>667</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuStart">
+    <property name="title">
+     <string>Start</string>
+    </property>
+    <widget class="QMenu" name="menuImport_Data">
+     <property name="title">
+      <string>Import Data...</string>
+     </property>
+     <addaction name="actionRaw_Data"/>
+     <addaction name="separator"/>
+     <addaction name="actionClean_Data"/>
+    </widget>
+    <addaction name="menuImport_Data"/>
+    <addaction name="separator"/>
+    <addaction name="actionView_Kaggle"/>
+    <addaction name="actionView_Git"/>
+    <addaction name="actionView_Report"/>
+    <addaction name="separator"/>
+    <addaction name="actionClose"/>
+   </widget>
+   <widget class="QMenu" name="menuPlot">
+    <property name="title">
+     <string>Plot</string>
+    </property>
+    <widget class="QMenu" name="menuCorrelation_Matrix">
+     <property name="title">
+      <string>Correlation Matrix...</string>
+     </property>
+     <addaction name="actionCM_Complete"/>
+     <addaction name="separator"/>
+     <addaction name="actionCM_Positive"/>
+     <addaction name="actionCM_Negative"/>
+    </widget>
+    <widget class="QMenu" name="menuInferential_Plots">
+     <property name="title">
+      <string>Inferential Plots...</string>
+     </property>
+     <addaction name="actionIP_ClassImbal"/>
+     <addaction name="actionIP_PCA_FComp"/>
+     <addaction name="separator"/>
+     <addaction name="actionIP_Debt_Ratio_to_Bankruptcy"/>
+     <addaction name="actionIP_Debt_Ratio_vs_Asset_Turnover"/>
+     <addaction name="separator"/>
+     <addaction name="actionIP_Grouped_Means"/>
+    </widget>
+    <addaction name="menuCorrelation_Matrix"/>
+    <addaction name="separator"/>
+    <addaction name="menuInferential_Plots"/>
+   </widget>
+   <widget class="QMenu" name="menuProperties">
+    <property name="title">
+     <string>Properties</string>
+    </property>
+    <widget class="QMenu" name="menuDataset">
+     <property name="title">
+      <string>Dataset...</string>
+     </property>
+     <addaction name="actionData_Shape"/>
+     <addaction name="actionData_Size"/>
+    </widget>
+    <widget class="QMenu" name="menuVariables_2">
+     <property name="title">
+      <string>Variables...</string>
+     </property>
+     <addaction name="actionVar_List"/>
+     <addaction name="actionVar_SS"/>
+    </widget>
+    <addaction name="menuDataset"/>
+    <addaction name="menuVariables_2"/>
+   </widget>
+   <widget class="QMenu" name="menuTablulate">
+    <property name="title">
+     <string>Tablulate</string>
+    </property>
+    <addaction name="actionLPM_Results"/>
+    <addaction name="separator"/>
+    <addaction name="actionProbit_Results"/>
+   </widget>
+   <addaction name="menuStart"/>
+   <addaction name="menuProperties"/>
+   <addaction name="menuPlot"/>
+   <addaction name="menuTablulate"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionVariables"/>
+   <addaction name="separator"/>
+  </widget>
+  <action name="actionVariables">
+   <property name="text">
+    <string>Variables</string>
+   </property>
+   <property name="toolTip">
+    <string>Dataset Variables</string>
+   </property>
+  </action>
+  <action name="actionView_Kaggle">
+   <property name="text">
+    <string>View Kaggle Competition</string>
+   </property>
+  </action>
+  <action name="actionBankrupt">
+   <property name="text">
+    <string>Bankrupt</string>
+   </property>
+  </action>
+  <action name="actionROA_C_beforeinterestanddepreceiationbeforeinterest">
+   <property name="text">
+    <string>ROA(C) before interest and depreceiation before interest</string>
+   </property>
+  </action>
+  <action name="actionROA_A_beforeinterestsnd_aftertax">
+   <property name="text">
+    <string>ROA(A) before interest and % after tax</string>
+   </property>
+  </action>
+  <action name="actionROA_B_beforeinterestanddespreciationaftertax">
+   <property name="text">
+    <string>ROA(B) before interest and depreciation after tax </string>
+   </property>
+  </action>
+  <action name="actionOperating_Gross_Margin">
+   <property name="text">
+    <string>Operating Gross Margin</string>
+   </property>
+  </action>
+  <action name="actionRealized_Sales_Gross_Margin">
+   <property name="text">
+    <string>Realized Sales Gross Margin</string>
+   </property>
+  </action>
+  <action name="actionOperating_Profit_Rate">
+   <property name="text">
+    <string>Operating Profit Rate</string>
+   </property>
+  </action>
+  <action name="actionPre_tax_Net_Interest_rate">
+   <property name="text">
+    <string>Pre-tax Net Interest rate</string>
+   </property>
+  </action>
+  <action name="actionAfter_tax_Net_Interest_Rate">
+   <property name="text">
+    <string>After-tax Net Interest Rate</string>
+   </property>
+  </action>
+  <action name="actionNon_industry_Income_and_Expenditure_Revenue">
+   <property name="text">
+    <string>Non-industry Income and Expenditure / Revenue</string>
+   </property>
+  </action>
+  <action name="actionContinuous_Interest_Rate_After_Tax">
+   <property name="text">
+    <string>Continuous Interest Rate (After Tax)</string>
+   </property>
+  </action>
+  <action name="actionOperating_Expense_Rate">
+   <property name="text">
+    <string>Operating Expense Rate</string>
+   </property>
+  </action>
+  <action name="actionResearch_and_Development_Expense_Rate">
+   <property name="text">
+    <string>Research and Development Expense Rate</string>
+   </property>
+  </action>
+  <action name="actionCash_Flow_Rate">
+   <property name="text">
+    <string>Cash Flow Rate</string>
+   </property>
+  </action>
+  <action name="actionTax_Rate_A">
+   <property name="text">
+    <string>Tax Rate (A)</string>
+   </property>
+  </action>
+  <action name="actionNet_Value_Per_Share_A">
+   <property name="text">
+    <string>Net Value Per Share (A)</string>
+   </property>
+  </action>
+  <action name="actionNet_Value_Per_Share_B">
+   <property name="text">
+    <string>Net Value Per Share (B)</string>
+   </property>
+  </action>
+  <action name="actionNet_Value_Per_Share_C">
+   <property name="text">
+    <string>Net Value Per Share (C)</string>
+   </property>
+  </action>
+  <action name="actionPersistent_EPS_in_the_Last_Four_Seasons">
+   <property name="text">
+    <string>Persistent EPS in the Last Four Seasons</string>
+   </property>
+  </action>
+  <action name="actionCash_Flow_Per_Share">
+   <property name="text">
+    <string>Cash Flow Per Share</string>
+   </property>
+  </action>
+  <action name="actionRevenue_Per_Share_YuanY">
+   <property name="text">
+    <string>Revenue Per Share (YuanY)</string>
+   </property>
+  </action>
+  <action name="actionOperating_Profit_Per_Share_YuanY">
+   <property name="text">
+    <string>Operating Profit Per Share (YuanY)</string>
+   </property>
+  </action>
+  <action name="actionPer_SHare_Net_Profit_Before_Tax_YuanY">
+   <property name="text">
+    <string>Per Share Net Profit Before Tax (YuanY)</string>
+   </property>
+  </action>
+  <action name="actionRealized_Sales_Gross_Profit_Growth_Rate">
+   <property name="text">
+    <string>Realized Sales Gross Profit Growth Rate</string>
+   </property>
+  </action>
+  <action name="actionOperating_Profit_Growth_Rate">
+   <property name="text">
+    <string>Operating Profit Growth Rate</string>
+   </property>
+  </action>
+  <action name="actionAfter_tax_Net_Profit_Growth_Rate">
+   <property name="text">
+    <string>After-tax Net Profit Growth Rate</string>
+   </property>
+  </action>
+  <action name="actionRegular_Net_Profit_Growth_Rate">
+   <property name="text">
+    <string>Regular Net Profit Growth Rate</string>
+   </property>
+  </action>
+  <action name="actionContinuous_Net_Profit_Growth_Rate">
+   <property name="text">
+    <string>Continuous Net Profit Growth Rate</string>
+   </property>
+  </action>
+  <action name="actionTotal_Asset_Growth_Rate">
+   <property name="text">
+    <string>Total Asset Growth Rate</string>
+   </property>
+  </action>
+  <action name="actionNet_Value_Growth_Rate">
+   <property name="text">
+    <string>Net Value Growth Rate</string>
+   </property>
+  </action>
+  <action name="actionTotal_Asset_Return_Growth_Rate_Ratio">
+   <property name="text">
+    <string>Total Asset Return Growth Rate Ratio</string>
+   </property>
+  </action>
+  <action name="actionCash_Reinvestment">
+   <property name="text">
+    <string>Cash Reinvestment %</string>
+   </property>
+  </action>
+  <action name="actionCurrent_Ratio">
+   <property name="text">
+    <string>Current Ratio</string>
+   </property>
+  </action>
+  <action name="actionQuick_Ratio">
+   <property name="text">
+    <string>Quick Ratio</string>
+   </property>
+  </action>
+  <action name="actionInterest_Expense_Ratio">
+   <property name="text">
+    <string>Interest Expense Ratio</string>
+   </property>
+  </action>
+  <action name="actionTotal_Debt_Total_net_Worth">
+   <property name="text">
+    <string>Total Debt / Total Net Worth</string>
+   </property>
+  </action>
+  <action name="actionDebt_Ratio">
+   <property name="text">
+    <string>Debt Ratio %</string>
+   </property>
+  </action>
+  <action name="actionNet_Worth_Assets">
+   <property name="text">
+    <string>Net Worth / Assets</string>
+   </property>
+  </action>
+  <action name="actionData_Shape">
+   <property name="text">
+    <string>Shape</string>
+   </property>
+  </action>
+  <action name="actionVar_List">
+   <property name="text">
+    <string>List</string>
+   </property>
+  </action>
+  <action name="actionVar_SS">
+   <property name="text">
+    <string>Summary Statistics</string>
+   </property>
+  </action>
+  <action name="actionData_Size">
+   <property name="text">
+    <string>Size</string>
+   </property>
+  </action>
+  <action name="actionCM_Complete">
+   <property name="text">
+    <string>Complete</string>
+   </property>
+  </action>
+  <action name="actionCM_Positive">
+   <property name="text">
+    <string>Positive</string>
+   </property>
+  </action>
+  <action name="actionCM_Negative">
+   <property name="text">
+    <string>Negative</string>
+   </property>
+  </action>
+  <action name="actionIP_PCA_FComp">
+   <property name="text">
+    <string>PCA Feature Composition</string>
+   </property>
+  </action>
+  <action name="actionIP_ClassImbal">
+   <property name="text">
+    <string>Class Imbalance</string>
+   </property>
+  </action>
+  <action name="actionIP_Debt_Ratio_to_Bankruptcy">
+   <property name="text">
+    <string>Debt Ratio to Bankruptcy</string>
+   </property>
+  </action>
+  <action name="actionIP_Debt_Ratio_vs_Asset_Turnover">
+   <property name="text">
+    <string>Debt Ratio vs Asset Turnover</string>
+   </property>
+  </action>
+  <action name="actionIP_Grouped_Means">
+   <property name="text">
+    <string>Grouped Means</string>
+   </property>
+  </action>
+  <action name="actionLPM_Results">
+   <property name="text">
+    <string>LPM Results</string>
+   </property>
+  </action>
+  <action name="actionProbit_Results">
+   <property name="text">
+    <string>Probit Results</string>
+   </property>
+  </action>
+  <action name="actionRaw_Data">
+   <property name="text">
+    <string>Raw Data</string>
+   </property>
+  </action>
+  <action name="actionClean_Data">
+   <property name="text">
+    <string>Clean Data</string>
+   </property>
+  </action>
+  <action name="actionView_Git">
+   <property name="text">
+    <string>View GitHub Repository</string>
+   </property>
+  </action>
+  <action name="actionView_Report">
+   <property name="text">
+    <string>View Project Report</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>pb_PCA</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>pushButton_click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>73</x>
+     <y>140</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>93</x>
+     <y>172</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pB_LPM</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>pushButton_click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>233</x>
+     <y>146</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>250</x>
+     <y>170</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pB_Probit</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>pushButton_click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>370</x>
+     <y>143</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>394</x>
+     <y>170</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pB_CHMap</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>pushButton_click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>528</x>
+     <y>147</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>551</x>
+     <y>172</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolBar</sender>
+   <signal>actionTriggered(QAction*)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>pushButton_click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>49</x>
+     <y>34</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>68</x>
+     <y>53</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>pushButton_click()</slot>
+ </slots>
+</ui>
