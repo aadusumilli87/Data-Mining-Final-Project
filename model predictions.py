@@ -52,22 +52,6 @@ ss = StandardScaler()
 # os Path
 path = os.path.abspath(os.getcwd())
 
-from google.colab import drive
-import sys
-
-# Mount Google Drive
-drive.mount('/content/drive')
-
-# Get the absolute path of the current folder
-abspath_curr = '/content/drive/My Drive/Colab Notebooks/finance/'
-
-# Get the absolute path of the shallow utilities folder
-abspath_util_shallow = '/content/drive/My Drive/Colab Notebooks/finance/Utilities/'
-
-# Get the absolute path of the shallow models folder
-abspath_model_shallow = '/content/drive/My Drive/Colab Notebooks/finance/Models/'
-
-"""## Warning"""
 
 import warnings
 
