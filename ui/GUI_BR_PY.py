@@ -241,7 +241,7 @@ def vrep():
 
 # Redirect to Kaggle Competition
 def vkag():
-    webbrowser.open("https://www.kaggle.com/fedesoriano/company-bankruptcy-prediction/code")
+    webbrowser.open("https://www.kaggle.com/fedesoriano/company-bankruptcy-prediction/")
 
 # GUI RUNNER
 if __name__ == '__main__':
