@@ -7,7 +7,7 @@ Set the Working Directory to the folder "ui" before running the application.
 Ensure that you have PyQt5 and its related libraries installed, as well as have your Python application updated to the most recent version.
 Check whether the "ui" folder has all the files necessary to run the GUI code.
 
-Within the "ui" folder, run the file called "GUI_BR_PY.py" only to launch the GUI application.
+Within the "ui" folder, run the file called "GUI_BR_PY.py" only to launch the GUI application. You do not need to run "GUI.py" within the Code folder to run the GUI -- it solely contains some code used to connect our GUI with our Python console.
 
 ## Inference.py
 
