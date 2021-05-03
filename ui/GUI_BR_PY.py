@@ -237,7 +237,7 @@ def vgit():
 
 # Redirect to Git Report
 def vrep():
-    webbrowser.open("https://github.com/aadusumilli87/Data-Mining-Final-Project/blob/main/Report.pdf")
+    webbrowser.open("https://github.com/aadusumilli87/Data-Mining-Final-Project/blob/main/Final-Group-Project-Report/Final-Group-Project-Report.pdf")
 
 # Redirect to Kaggle Competition
 def vkag():
