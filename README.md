@@ -1,5 +1,8 @@
 # Data Mining Final Project - README.md file
 
+## Source
+Dataset initially published by Taiwan Economic Journal and uploaded to Kaggle by user fedesoriano. Link: https://www.kaggle.com/fedesoriano/company-bankruptcy-prediction
+
 ## GUI 
 ### Operating the GUI:
 Set the Working Directory to the folder "ui" before running the application.
